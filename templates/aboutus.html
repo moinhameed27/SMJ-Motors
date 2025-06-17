@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About Us | SMJ Motors</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6c3df4;
+      --secondary: #f5f6fa;
+      --accent: #f0e9ff;
+      --text: #222;
+      --muted: #888;
+      --border: #ececec;
+      --card-radius: 16px;
+      --shadow: 0 2px 12px rgba(44, 62, 80, 0.07);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      background: #f7f9fb;
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    a { color: var(--primary); text-decoration: none; }
+    .container {
+      max-width: 1050px;
+      margin: 32px auto;
+      padding: 0 16px;
+    }
+    /* Simple Home navigation */
+    .navbar {
+      background: #fff;
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 18px 32px;
+      margin-bottom: 32px;
+    }
+    .navbar .logo {
+      display: flex;
+      align-items: center;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--primary);
+      gap: 10px;
+    }
+    .navbar nav {
+      margin-left: 32px;
+      display: flex;
+      gap: 28px;
+    }
+    .navbar nav a {
+      color: var(--primary);
+      font-weight: 600;
+      padding-bottom: 2px;
+      border-bottom: 2px solid var(--primary);
+      font-size: 1.08rem;
+    }
+    /* Hero Section */
+    .about-hero {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 32px;
+      margin-bottom: 40px;
+      background: #fff;
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow);
+      padding: 32px 24px;
+    }
+    .about-hero-img {
+      flex: 1 1 300px;
+      min-width: 260px;
+      max-width: 340px;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(44,62,80,0.10);
+      background: #eee;
+      height: 340px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .about-hero-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 14px;
+    }
+    .about-hero-content {
+      flex: 2 1 340px;
+      min-width: 250px;
+    }
+    .about-hero-content h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+    .about-hero-content p {
+      color: var(--text);
+      font-size: 1.13rem;
+      margin-bottom: 14px;
+    }
+    .about-hero-content .tagline {
+      color: var(--muted);
+      font-size: 1.08rem;
+      margin-bottom: 16px;
+    }
+    /* Mission/Vision Section */
+    .about-section {
+      background: #fff;
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow);
+      padding: 32px 24px;
+      margin-bottom: 36px;
+    }
+    .about-section h2 {
+      font-size: 1.35rem;
+      color: var(--primary);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .about-section p {
+      color: var(--text);
+      font-size: 1.06rem;
+      margin-bottom: 8px;
+    }
+    .about-section ul {
+      margin: 12px 0 0 18px;
+      color: var(--text);
+      font-size: 1.03rem;
+    }
+    /* Team Section */
+    .team-section {
+      background: #fff;
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow);
+      padding: 32px 24px;
+      margin-bottom: 36px;
+    }
+    .team-section h2 {
+      font-size: 1.35rem;
+      color: var(--primary);
+      font-weight: 600;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .team-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 32px;
+      justify-content: center;
+      align-items: stretch;
+    }
+    .team-card {
+      background: var(--secondary);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(44,62,80,0.07);
+      padding: 24px 18px 18px 18px;
+      flex: 1 1 220px;
+      max-width: 260px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      min-width: 200px;
+    }
+    .team-card img {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 14px;
+      border: 3px solid var(--primary);
+      background: #fff;
+    }
+    .team-card .name {
+      font-weight: 600;
+      font-size: 1.13rem;
+      color: var(--primary);
+      margin-bottom: 3px;
+    }
+    .team-card .role {
+      color: var(--text);
+      font-size: 1.01rem;
+      font-weight: 500;
+      margin-bottom: 7px;
+    }
+    .team-card .desc {
+      color: var(--muted);
+      font-size: 0.97rem;
+      margin-bottom: 2px;
+    }
+    /* Footer */
+    .footer {
+      background: #fff;
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow);
+      padding: 32px 24px;
+      margin-top: 32px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      justify-content: space-between;
+    }
+    .footer .footer-col {
+      min-width: 180px;
+      flex: 1;
+    }
+    .footer .logo {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .footer .socials {
+      display: flex;
+      gap: 14px;
+      margin: 10px 0 0 0;
+    }
+    .footer .socials a {
+      background: var(--secondary);
+      color: var(--primary);
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+    .footer h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .footer ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      color: var(--muted);
+    }
+    .footer ul li {
+      margin-bottom: 6px;
+    }
+    .footer .contact-info {
+      color: var(--muted);
+      font-size: 0.97rem;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .footer .contact-info i {
+      color: var(--primary);
+    }
+    @media (max-width: 900px) {
+      .about-hero { flex-direction: column; text-align: center; }
+      .about-hero-img { margin-bottom: 18px; }
+      .team-grid { flex-direction: column; align-items: center; }
+      .footer { flex-direction: column; gap: 24px; }
+    }
+    @media (max-width: 600px) {
+      .navbar { flex-direction: column; gap: 12px; padding: 12px 8px; }
+      .container { padding: 0 4px; }
+      .footer { padding: 18px 8px; }
+      .about-hero, .about-section, .team-section { padding: 18px 6px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Simple navbar with only Home link -->
+  <div class="container">
+    <div class="navbar">
+      <div class="logo">
+        <!-- <span>🚗</span> -->
+        <img src="/static/showroom.png" width="32" height="32">
+        <span>SMJ Motors</span>
+      </div>
+      <nav>
+        <a href="user.html">Home</a>
+      </nav>
+    </div>
+
+    <!-- Hero Section: Group photo and intro -->
+    <section class="about-hero">
+      <div class="about-hero-img">
+        <!-- Group photo: Use the provided image file name -->
+        <img src="/static/logo.png" alt="SMJ Motors Team Photo">
+      </div>
+      <div class="about-hero-content">
+        <h1>About SMJ Motors</h1>
+        <div class="tagline">Your all-in-one digital garage and vehicle showroom</div>
+        <p>
+          SMJ Motors is a modern web-based management system that brings together garage services and a digital vehicle showroom. Designed for seamless day-to-day operations, SMJ Motors empowers both customers and staff with a unified, user-friendly platform for managing vehicle servicing, appointments, and browsing or purchasing cars and bikes—all online.
+        </p>
+        <p>
+          Our mission is to make automotive care and vehicle shopping simple, transparent, and accessible for everyone.
+        </p>
+      </div>
+    </section>
+
+    <!-- Mission, Vision, and Features -->
+    <section class="about-section">
+      <h2>Our Mission & Vision</h2>
+      <p>
+        <strong>Mission:</strong> To streamline automotive service and sales by integrating garage management and vehicle showroom experiences into a single, accessible digital platform.
+      </p>
+      <p>
+        <strong>Vision:</strong> To set the standard for digital automotive solutions, making vehicle care and purchasing effortless, transparent, and enjoyable for all.
+      </p>
+      <h2 style="margin-top:28px;">What Makes SMJ Motors Different?</h2>
+      <ul>
+        <li>Unified platform for garage services and vehicle showroom</li>
+        <li>Dedicated access for admins and customers</li>
+        <li>Real-time appointment, service, and sales management</li>
+        <li>Digital vehicle browsing and purchasing with detailed listings</li>
+        <li>Easy-to-use, responsive interface accessible from any device</li>
+      </ul>
+    </section>
+
+    <!-- Team Section: Meet the team -->
+    <section class="team-section">
+      <h2>Meet Our Leadership</h2>
+      <div class="team-grid">
+        <!-- Team Member 1 -->
+        <div class="team-card">
+          <!-- To use a real photo, replace src with your image file, e.g., "subhan.jpg" -->
+          <img src="/static/subhan.jpg" alt="Subhan Ul Haq">
+          <div class="name">Subhan Ul Haq</div>
+          <div class="role">Chief Executive Officer (21)</div>
+          <div class="desc">Founder and visionary behind SMJ Motors, leading the drive for digital transformation in automotive services.</div>
+        </div>
+        <!-- Team Member 2 -->
+        <div class="team-card">
+          <!-- To use a real photo, replace src with your image file, e.g., "moin.jpg" -->
+          <img src="/static/moin.jpg" alt="Muhammad Moin U Din">
+          <div class="name">Muhammad Moin U Din</div>
+          <div class="role">Operations Manager (20)</div>
+          <div class="desc">Ensures smooth day-to-day operations, focusing on customer experience and service excellence.</div>
+        </div>
+        <!-- Team Member 3 -->
+        <div class="team-card">
+          <!-- To use a real photo, replace src with your image file, e.g., "junaid.jpg" -->
+          <img src="/static/junaid.png" alt="Muhammad Junaid Malik">
+          <div class="name">Muhammad Junaid Malik</div>
+          <div class="role">Finance Manager (21)</div>
+          <div class="desc">Oversees financial planning and growth, ensuring the sustainability and success of SMJ Motors.</div>
+        </div>
+      </div>
+    </section>
+
+      <!-- Footer with logo, links, services, and contact info -->
+      <div id="footer-placeholder"></div>
+      <script>
+        fetch('footer.html')
+          .then(response => response.text())
+          .then(html => {
+            document.getElementById('footer-placeholder').innerHTML = html;
+          });
+      </script>
+  </div>
+</body>
+</html>

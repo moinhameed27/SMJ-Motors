@@ -1,0 +1,31 @@
+Sem Project/
+│
+├── app.py
+├── templates/
+│   ├── aboutus.html
+│   ├── aboutusA.html
+│   ├── addappointment.html
+│   ├── addcar.html
+│   ├── addservice.html
+│   ├── appointmens.html
+│   ├── appointmensA.html
+│   ├── footer.html
+│   ├── footerA.html
+│   ├── services.html
+│   ├── servicesA.html
+│   ├── showroom.html 
+│   ├── showroomA.html 
+│   ├── user.html 
+│   ├── admin.html 
+│   ├── login.html 
+│   └── signup.html
+│   └── resources/
+│       ├──fb.png
+│       ├──insta.png
+│       ├──junaid.png
+│       ├──logo.png
+│       ├──moin.png
+│       ├──showroom.png
+│       ├──subhan.png
+│       ├──x.png
+└── requirements.txt

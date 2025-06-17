@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Appointments | SMJ Motors</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6c3df4;
+      --secondary: #f5f6fa;
+      --accent: #f0e9ff;
+      --success: #d1fae5;
+      --warning: #fffbe6;
+      --danger: #ffeaea;
+      --text: #222;
+      --muted: #888;
+      --border: #ececec;
+      --card-radius: 16px;
+      --shadow: 0 2px 12px rgba(44, 62, 80, 0.07);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      background: #f7f9fb;
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    a { color: var(--primary); text-decoration: none; }
+    .container {
+      max-width: 1200px;
+      margin: 32px auto;
+      padding: 0 16px;
+    }
+    /* Navbar */
+    .navbar {
+      background: #fff;
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 32px;
+      margin-bottom: 32px;
+    }
+    .navbar .logo {
+      display: flex;
+      align-items: center;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--primary);
+      gap: 10px;
+    }
+    .navbar nav {
+      display: flex;
+      gap: 28px;
+    }
+    .navbar nav a {
+      color: var(--text);
+      font-weight: 500;
+      padding-bottom: 2px;
+      transition: border-bottom 0.2s;
+    }
+    .navbar nav a:hover,
+    .navbar nav a.active {
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary);
+    }
+    /* Profile dropdown */
+    .profile-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .profile {
+      background: var(--secondary);
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: var(--primary);
+      border: none;
+      cursor: pointer;
+    }
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 44px;
+      min-width: 180px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      z-index: 100;
+      flex-direction: column;
+      padding: 8px 0;
+      transition: opacity 0.18s;
+    }
+    .dropdown-menu a {
+      display: block;
+      padding: 10px 18px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 1rem;
+      transition: background 0.15s;
+    }
+    .dropdown-menu a:hover {
+      background: var(--secondary);
+    }
+    .dropdown-menu .logout {
+      color: #d32f2f;
+    }
+    .dropdown-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 6px 0;
+    }
+    .profile-dropdown.open .dropdown-menu {
+      display: flex;
+      opacity: 1;
+    }
+    /* Appointments section */
+    .appointments-section {
+      background: #fff;
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow);
+      padding: 32px 24px;
+      margin-bottom: 32px;
+    }
+    .section-title {
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 6px;
+    }
+    .appointments-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .appointment-card {
+      background: var(--secondary);
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+    }
+    .appointment-card h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+    .appointment-card p {
+      color: var(--text);
+      font-size: 0.98rem;
+      margin: 0;
+    }
+    .appointment-card .time {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    .appointment-card .status {
+      position: absolute;
+      right: 16px;
+      top: 16px;
+      font-size: 0.85rem;
+      padding: 2px 8px;
+      border-radius: 8px;
+      background: #fff;
+      color: var(--primary);
+      font-weight: 500;
+    }
+    .appointment-card .status.confirmed { background: var(--success); color: #059669; }
+    .appointment-card .status.pending { background: var(--warning); color: #b59f00; }
+    /* Appointment form */
+    .appointment-form {
+      background: #fff;
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow);
+      padding: 32px 24px;
+      margin-bottom: 32px;
+    }
+    .appointment-form h2 {
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 6px;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: var(--text);
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border 0.2s;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--primary);
+      outline: none;
+    }
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .form-actions button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .form-actions button:hover {
+      background: #4b23b9;
+    }
+    .form-actions button.secondary {
+      background: var(--secondary);
+      color: var(--primary);
+    }
+    /* Page title */
+    h1 {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    /* Footer */
+    .footer {
+      background: #fff;
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow);
+      padding: 32px 24px;
+      margin-top: 32px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      justify-content: space-between;
+    }
+    .footer .footer-col {
+      min-width: 180px;
+      flex: 1;
+    }
+    .footer .logo {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .footer .socials {
+      display: flex;
+      gap: 14px;
+      margin: 10px 0 0 0;
+    }
+    .footer .socials a {
+      background: var(--secondary);
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .footer .socials a img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .footer h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .footer ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      color: var(--muted);
+    }
+    .footer ul li {
+      margin-bottom: 6px;
+    }
+    .footer .contact-info {
+      color: var(--muted);
+      font-size: 0.97rem;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    /* Responsive styles */
+    @media (max-width: 900px) {
+      .footer { flex-direction: column; gap: 24px; }
+    }
+    @media (max-width: 600px) {
+      .navbar { flex-direction: column; gap: 12px; padding: 12px 8px; }
+      .container { padding: 0 4px; }
+      .footer { padding: 18px 8px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Navbar -->
+    <div class="navbar">
+      <div class="logo">
+        <img src="/static/showroom.png" width="32" height="32" alt="SMJ Motors Logo">
+        <span>SMJ Motors</span>
+      </div>
+      <nav>
+        <a href="user.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="appointments.html" class="active">Appointments</a>
+        <a href="showroom.html">Showroom</a>
+        <a href="#contact-section">Contact</a>
+      </nav>
+      <div class="profile-dropdown">
+        <button class="profile" id="profileBtn" aria-haspopup="true" aria-expanded="false">👤</button>
+        <div class="dropdown-menu" id="dropdownMenu">
+          <a href="#">Profile</a>
+          <a href="#">My Vehicles</a>
+          <a href="#">Service History</a>
+          <a href="#">Settings</a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="logout">Logout</a>
+        </div>
+      </div>
+    </div>
+
+    <h1>Your Appointments</h1>
+
+    <!-- Appointments List -->
+    <section class="appointments-section">
+      <div class="section-title">Upcoming Appointments</div>
+      <div class="appointments-list">
+        <div class="appointment-card">
+          <h3>Oil Change & Inspection</h3>
+          <p>Toyota Camry</p>
+          <p class="time">May 15, 2023 · 10:00 AM</p>
+          <span class="status confirmed">Confirmed</span>
+        </div>
+        <div class="appointment-card">
+          <h3>Brake Service</h3>
+          <p>Honda CBR</p>
+          <p class="time">May 22, 2023 · 2:30 PM</p>
+          <span class="status pending">Pending</span>
+        </div>
+        <div class="appointment-card">
+          <h3>Showroom Visit</h3>
+          <p>Test Drive: Ford Mustang</p>
+          <p class="time">June 5, 2023 · 11:00 AM</p>
+          <span class="status confirmed">Confirmed</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Appointment Booking Form -->
+    <section class="appointment-form">
+      <h2>Book New Appointment</h2>
+      <form>
+        <div class="form-group">
+          <label for="appointment-type">Appointment Type</label>
+          <select id="appointment-type" required>
+            <option value="">Select type</option>
+            <option value="service">Vehicle Service</option>
+            <!-- <option value="test-drive">Showroom Test Drive</option> -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="vehicle">Vehicle</label>
+          <select id="vehicle" required>
+            <option value="">Select vehicle</option>
+            <option value="toyota-camry">Toyota Camry</option>
+            <option value="honda-cbr">Honda CBR</option>
+            <option value="ford-mustang">Ford Mustang</option>
+            <!-- <option value="showroom-visit">Showroom Visit (No Vehicle)</option> -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="service">Service Type</label>
+          <select id="service" required>
+            <option value="">Select service</option>
+            <option value="oil-change">Oil Change</option>
+            <option value="brake-service">Brake Service</option>
+            <option value="engine-tuneup">Engine Tune-Up</option>
+            <option value="test-drive">Test Drive</option>
+            <option value="inspection">Inspection</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="date">Date</label>
+          <input type="date" id="date" required>
+        </div>
+        <div class="form-group">
+          <label for="time">Time</label>
+          <input type="time" id="time" required>
+        </div>
+        <div class="form-group">
+          <label for="notes">Notes (Optional)</label>
+          <textarea id="notes" rows="3"></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="reset" class="secondary">Clear</button>
+          <button type="submit">Book Appointment</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Footer with logo, links, services, and contact info -->
+    <div id="footer-placeholder"></div>
+<script>
+  fetch('footer.html')
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById('footer-placeholder').innerHTML = html;
+    });
+</script>
+
+  <script>
+    // Profile dropdown toggle (keep if you have it)
+    const profileBtn = document.getElementById('profileBtn');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+    const profileDropdown = profileBtn?.parentElement;
+  
+    profileBtn?.addEventListener('click', function(e) {
+      e.stopPropagation();
+      profileDropdown?.classList.toggle('open');
+    });
+  
+    document.addEventListener('click', function(e) {
+      if (profileDropdown && !profileDropdown.contains(e.target)) {
+        profileDropdown?.classList.remove('open');
+      }
+    });
+  
+    // Active tab highlight
+    const navLinks = document.querySelectorAll('.navbar nav a');
+    navLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        // Only update active class for non-contact links
+        if (!this.href.includes('#contact-section')) {
+          navLinks.forEach(l => l.classList.remove('active'));
+          this.classList.add('active');
+        }
+        // For contact link, just scroll (no active class change)
+        if (this.href.includes('#contact-section')) {
+          e.preventDefault();
+          document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+  </script>  
+</body>
+</html>

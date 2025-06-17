@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Services | SMJ Motors</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6c3df4;
+      --secondary: #f5f6fa;
+      --accent: #f0e9ff;
+      --success: #d1fae5;
+      --warning: #fffbe6;
+      --danger: #ffeaea;
+      --text: #222;
+      --muted: #888;
+      --border: #ececec;
+      --card-radius: 16px;
+      --shadow: 0 2px 12px rgba(44, 62, 80, 0.07);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      background: #f7f9fb;
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    a { color: var(--primary); text-decoration: none; }
+    .container {
+      max-width: 1200px;
+      margin: 32px auto;
+      padding: 0 16px;
+    }
+    /* Navbar */
+    .navbar {
+      background: #fff;
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 32px;
+      margin-bottom: 32px;
+    }
+    .navbar .logo {
+      display: flex;
+      align-items: center;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--primary);
+      gap: 10px;
+    }
+    .navbar nav {
+      display: flex;
+      gap: 28px;
+    }
+    .navbar nav a {
+      color: var(--text);
+      font-weight: 500;
+      padding-bottom: 2px;
+      transition: border-bottom 0.2s;
+    }
+    .navbar nav a:hover,
+    .navbar nav a.active {
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary);
+    }
+    /* Profile dropdown */
+    .profile-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .profile {
+      background: var(--secondary);
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: var(--primary);
+      border: none;
+      cursor: pointer;
+    }
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 44px;
+      min-width: 180px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      z-index: 100;
+      flex-direction: column;
+      padding: 8px 0;
+      transition: opacity 0.18s;
+    }
+    .dropdown-menu a {
+      display: block;
+      padding: 10px 18px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 1rem;
+      transition: background 0.15s;
+    }
+    .dropdown-menu a:hover {
+      background: var(--secondary);
+    }
+    .dropdown-menu .logout {
+      color: #d32f2f;
+    }
+    .dropdown-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 6px 0;
+    }
+    .profile-dropdown.open .dropdown-menu {
+      display: flex;
+      opacity: 1;
+    }
+    /* Dashboard grid */
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    .card {
+      background: #fff;
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 4px;
+    }
+    .add-btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .add-btn:hover { background: #4b23b9; }
+    .vehicle-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .vehicle-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--secondary);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.98rem;
+    }
+    .vehicle-icon {
+      font-size: 1.2rem;
+      color: var(--primary);
+    }
+    .badge {
+      font-size: 0.8rem;
+      border-radius: 8px;
+      padding: 2px 10px;
+      margin-left: 10px;
+      font-weight: 500;
+    }
+    .badge.active { background: var(--success); color: #059669; }
+    .badge.due { background: var(--warning); color: #b59f00; }
+    .service-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .service-item {
+      background: var(--accent);
+      border-radius: 8px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      position: relative;
+    }
+    .service-item.pending { background: var(--warning); }
+    .service-item .status {
+      position: absolute;
+      right: 16px;
+      top: 12px;
+      font-size: 0.85rem;
+      padding: 2px 8px;
+      border-radius: 8px;
+      background: #fff;
+      color: var(--primary);
+      font-weight: 500;
+    }
+    .service-item .status.confirmed { background: var(--success); color: #059669; }
+    .service-item .status.pending { background: var(--warning); color: #b59f00; }
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 0.97rem;
+    }
+    .activity-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+    }
+    .activity-icon {
+      font-size: 1.1rem;
+      color: var(--primary);
+    }
+    /* Services section */
+    .services-section {
+      background: #fff;
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow);
+      padding: 32px 24px;
+      margin-bottom: 32px;
+    }
+    .section-title {
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 6px;
+    }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .service-card {
+      background: var(--secondary);
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(44,62,80,0.07);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      position: relative;
+      transition: transform 0.2s cubic-bezier(.4,0,.2,1), box-shadow 0.2s;
+    }
+    .service-card:hover {
+      transform: translateY(-6px) scale(1.03);
+      box-shadow: 0 6px 24px rgba(44,62,80,0.13);
+      z-index: 2;
+    }
+    .service-icon {
+      font-size: 2.2rem;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+    .service-card h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    .service-card p {
+      color: var(--text);
+      font-size: 1rem;
+      flex-grow: 1;
+    }
+    .service-price {
+      font-weight: 600;
+      color: var(--primary);
+      font-size: 1.1rem;
+      margin-top: 6px;
+    }
+    .service-request {
+      position: absolute;
+      right: 16px;
+      bottom: 16px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .service-request:hover {
+      background: #4b23b9;
+    }
+    .centered {
+    text-align: center;
+    }
+    h1 {
+    text-align: center;
+    margin-bottom: 24px; /* Add bottom spacing */
+    }
+    html {
+    scroll-behavior: smooth;
+    }
+    /* Footer */
+    .footer {
+      background: #fff;
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow);
+      padding: 32px 24px;
+      margin-top: 32px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      justify-content: space-between;
+    }
+    .footer .footer-col {
+      min-width: 180px;
+      flex: 1;
+    }
+    .footer .logo {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .footer .socials {
+      display: flex;
+      gap: 14px;
+      margin: 10px 0 0 0;
+    }
+    .footer .socials a {
+      background: var(--secondary);
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .footer .socials a img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .footer h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .footer ul {
+      list-style: none;
+     margin: 0;
+      padding: 0;
+      color: var(--muted);
+    }
+    .footer ul li {
+      margin-bottom: 6px;
+    }
+    .footer .contact-info {
+      color: var(--muted);
+      font-size: 0.97rem;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .footer .contact-info i {
+      color: var(--primary);
+    }
+    /* Responsive styles */
+    @media (max-width: 900px) {
+      .dashboard { grid-template-columns: 1fr; }
+      .services-grid { grid-template-columns: 1fr 1fr; }
+      .footer { flex-direction: column; gap: 24px; }
+    }
+    @media (max-width: 600px) {
+      .navbar { flex-direction: column; gap: 12px; padding: 12px 8px; }
+      .container { padding: 0 4px; }
+      .services-grid { grid-template-columns: 1fr; }
+      .footer { padding: 18px 8px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Navbar -->
+    <div class="navbar">
+      <div class="logo">
+        <img src="/static/showroom.png" width="32" height="32">
+        <span>SMJ Motors</span>
+      </div>
+      <nav>
+        <a href="user.html">Home</a>
+        <a href="services.html" class="active">Services</a>
+        <a href="appointments.html">Appointments</a>
+        <a href="showroom.html">Showroom</a>
+        <a href="#contact-section">Contact</a>
+      </nav>
+      <div class="profile-dropdown">
+        <button class="profile" id="profileBtn" aria-haspopup="true" aria-expanded="false">👤</button>
+        <div class="dropdown-menu" id="dropdownMenu">
+          <a href="#">Profile</a>
+          <a href="#">My Vehicles</a>
+          <a href="#">Service History</a>
+          <a href="#">Settings</a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="logout">Logout</a>
+        </div>
+      </div>
+    </div>
+
+    <h1 class="centered">Our Services</h1>
+
+    <!-- Motorbike Services Section -->
+    <section class="services-section">
+      <div class="section-title">Motorbike Services</div>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-icon">🏍️</div>
+          <h3>Motorbike Oil Change</h3>
+          <p>Keep your motorbike engine running smoothly with regular oil changes.</p>
+          <div class="service-price">$39.99</div>
+          <button class="service-request" title="Request Service">+</button>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🔧</div>
+          <h3>Chain Adjustment & Lubrication</h3>
+          <p>Ensure optimal chain tension and lubrication for safe riding.</p>
+          <div class="service-price">$29.99</div>
+          <button class="service-request" title="Request Service">+</button>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🛞</div>
+          <h3>Tire Replacement & Balancing</h3>
+          <p>Professional tire replacement and balancing for motorbikes.</p>
+          <div class="service-price">$49.99</div>
+          <button class="service-request" title="Request Service">+</button>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🔋</div>
+          <h3>Battery Check & Replacement</h3>
+          <p>Keep your motorbike battery healthy and replace when needed.</p>
+          <div class="service-price">$19.99</div>
+          <button class="service-request" title="Request Service">+</button>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🔍</div>
+          <h3>Diagnostic & Inspection</h3>
+          <p>Comprehensive diagnostics and safety inspections for motorbikes.</p>
+          <div class="service-price">$59.99</div>
+          <button class="service-request" title="Request Service">+</button>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🛠️</div>
+          <h3>Brake Service</h3>
+          <p>Inspection and repair of motorbike brake systems.</p>
+          <div class="service-price">$39.99</div>
+          <button class="service-request" title="Request Service">+</button>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">⚙️</div>
+          <h3>Engine Tune-Up</h3>
+          <p>Optimize your motorbike engine performance.</p>
+          <div class="service-price">$89.99</div>
+          <button class="service-request" title="Request Service">+</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Car Services Section -->
+    <section class="services-section">
+      <div class="section-title">Car Services</div>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-icon">🚗</div>
+          <h3>Car Oil Change</h3>
+          <p>Regular oil changes to keep your car engine running efficiently.</p>
+          <div class="service-price">$39.99</div>
+          <button class="service-request" title="Request Service">+</button>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">⚙️</div>
+          <h3>Engine Tune-Up</h3>
+          <p>Comprehensive engine maintenance for optimal car performance.</p>
+          <div class="service-price">$149.99</div>
+          <button class="service-request" title="Request Service">+</button>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🛞</div>
+          <h3>Tire Rotation & Alignment</h3>
+          <p>Extend tire life and improve safety with rotation and alignment.</p>
+          <div class="service-price">$49.99</div>
+          <button class="service-request" title="Request Service">+</button>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🧰</div>
+          <h3>Brake Service</h3>
+          <p>Inspection and repair of brake systems for safe driving.</p>
+          <div class="service-price">$59.99</div>
+          <button class="service-request" title="Request Service">+</button>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🔍</div>
+          <h3>Vehicle Inspection & Diagnostics</h3>
+          <p>Full vehicle diagnostics and safety inspections.</p>
+          <div class="service-price">$79.99</div>
+          <button class="service-request" title="Request Service">+</button>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🛠️</div>
+          <h3>Transmission Service</h3>
+          <p>Maintenance and repair of your car's transmission system.</p>
+          <div class="service-price">$199.99</div>
+          <button class="service-request" title="Request Service">+</button>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">❄️</div>
+          <h3>Air Conditioning Service</h3>
+          <p>Keep your car's AC system cool and efficient.</p>
+          <div class="service-price">$89.99</div>
+          <button class="service-request" title="Request Service">+</button>
+        </div>
+      </div>
+    </section>
+
+    <div id="footer-placeholder"></div>
+<script>
+  fetch('footer.html')
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById('footer-placeholder').innerHTML = html;
+    });
+</script>
+
+  <script>
+    // Profile dropdown toggle (keep if you have it)
+    const profileBtn = document.getElementById('profileBtn');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+    const profileDropdown = profileBtn?.parentElement;
+  
+    profileBtn?.addEventListener('click', function(e) {
+      e.stopPropagation();
+      profileDropdown?.classList.toggle('open');
+    });
+  
+    document.addEventListener('click', function(e) {
+      if (profileDropdown && !profileDropdown.contains(e.target)) {
+        profileDropdown?.classList.remove('open');
+      }
+    });
+  
+    // Active tab highlight
+    const navLinks = document.querySelectorAll('.navbar nav a');
+    navLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        // Only update active class for non-contact links
+        if (!this.href.includes('#contact-section')) {
+          navLinks.forEach(l => l.classList.remove('active'));
+          this.classList.add('active');
+        }
+        // For contact link, just scroll (no active class change)
+        if (this.href.includes('#contact-section')) {
+          e.preventDefault();
+          document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+  
+</body>
+</html>

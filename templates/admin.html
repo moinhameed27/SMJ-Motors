@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SMJ Motors | Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /* === Root variables for theme colors and spacing === */
+    :root {
+      --primary: #6c3df4;
+      --secondary: #f5f6fa;
+      --accent: #f0e9ff;
+      --success: #d1fae5;
+      --warning: #fffbe6;
+      --danger: #ffeaea;
+      --text: #222;
+      --muted: #888;
+      --border: #ececec;
+      --card-radius: 16px;
+      --shadow: 0 2px 12px rgba(44, 62, 80, 0.07);
+    }
+    /* === Reset and base styles === */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      background: #f7f9fb;
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    a { color: var(--primary); text-decoration: none; }
+    /* === Main container for content === */
+    .container {
+      max-width: 1200px;
+      margin: 32px auto;
+      padding: 0 16px;
+    }
+    /* === Navbar styles === */
+    .navbar {
+      background: #fff;
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 32px;
+      margin-bottom: 32px;
+    }
+    .navbar .logo {
+      display: flex;
+      align-items: center;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--primary);
+      gap: 10px;
+    }
+    .navbar nav {
+      display: flex;
+      gap: 28px;
+    }
+    .navbar nav a {
+      color: var(--text);
+      font-weight: 500;
+      padding-bottom: 2px;
+      transition: border-bottom 0.2s;
+    }
+    .navbar nav a:hover {
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary);
+    }
+    .navbar nav a.active {
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary);
+    }
+    /* === Profile dropdown styles === */
+    .profile-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .profile {
+      background: var(--secondary);
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: var(--primary);
+      border: none;
+      cursor: pointer;
+    }
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 44px;
+      min-width: 180px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      z-index: 100;
+      flex-direction: column;
+      padding: 8px 0;
+      transition: opacity 0.18s;
+    }
+    .dropdown-menu a {
+      display: block;
+      padding: 10px 18px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 1rem;
+      transition: background 0.15s;
+    }
+    .dropdown-menu a:hover {
+      background: var(--secondary);
+    }
+    .dropdown-menu .logout {
+      color: #d32f2f;
+    }
+    .dropdown-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 6px 0;
+    }
+    .profile-dropdown.open .dropdown-menu {
+      display: flex;
+      opacity: 1;
+    }
+    /* === Dashboard grid for admin stats === */
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    .card {
+      background: #fff;
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 4px;
+    }
+    .add-btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .add-btn:hover { background: #4b23b9; }
+    /* === Admin stats styles === */
+    .admin-stat {
+      background: var(--secondary);
+      border-radius: 10px;
+      padding: 12px 18px;
+      min-width: 170px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.97rem;
+    }
+    .stat-value {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    /* === Admin table styles === */
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    .admin-table th, .admin-table td {
+      padding: 10px 8px;
+      text-align: left;
+      font-size: 0.97rem;
+    }
+    .admin-table th {
+      color: var(--muted);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border);
+    }
+    .admin-table td {
+      border-bottom: 1px solid var(--border);
+    }
+    .admin-table .status {
+      border-radius: 8px;
+      padding: 2px 10px;
+      font-size: 0.91rem;
+      font-weight: 500;
+      display: inline-block;
+    }
+    .admin-table .status.completed {
+      color: #059669;
+      background: var(--success);
+    }
+    .admin-table .status.progress {
+      color: #b59f00;
+      background: var(--warning);
+    }
+    .admin-table .actions {
+      display: flex;
+      gap: 10px;
+    }
+    .admin-table .action-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--primary);
+      font-size: 1.1rem;
+      padding: 2px;
+    }
+    .pagination {
+      margin-top: 8px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .pagination span, .pagination a {
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: var(--secondary);
+      color: var(--primary);
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .pagination .active {
+      background: var(--primary);
+      color: #fff;
+    }
+    /* === Admin sections: Services, Showroom, Appointments === */
+    .admin-section {
+      background: #fff;
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+    .admin-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      gap: 10px;
+    }
+    .admin-header .btn {
+      padding: 7px 18px;
+      border-radius: 8px;
+      border: none;
+      font-size: 0.97rem;
+      font-weight: 500;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+    .admin-header .btn.preview {
+      background: var(--secondary);
+      color: var(--primary);
+    }
+    .admin-header .btn.panel {
+      background: var(--primary);
+      color: #fff;
+    }
+    /* === Footer styles === */
+    .footer {
+      background: #fff;
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow);
+      padding: 32px 24px;
+      margin-top: 32px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      justify-content: space-between;
+    }
+    .footer .footer-col {
+      min-width: 180px;
+      flex: 1;
+    }
+    .footer .logo {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .footer .socials {
+      display: flex;
+      gap: 14px;
+      margin: 10px 0 0 0;
+    }
+    .footer .socials a {
+      background: var(--secondary);
+      color: var(--primary);
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+    .footer h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .footer ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      color: var(--muted);
+    }
+    .footer ul li {
+      margin-bottom: 6px;
+    }
+    .footer .contact-info {
+      color: var(--muted);
+      font-size: 0.97rem;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .footer .contact-info i {
+      color: var(--primary);
+    }
+    /* === Smooth scrolling for contact link === */
+    html { scroll-behavior: smooth; }
+    #contact-section { scroll-margin-top: 100px; }
+    /* === Responsive styles === */
+    @media (max-width: 900px) {
+      .dashboard { grid-template-columns: 1fr; }
+      .footer { flex-direction: column; gap: 24px; }
+    }
+    @media (max-width: 600px) {
+      .navbar { flex-direction: column; gap: 12px; padding: 12px 8px; }
+      .container { padding: 0 4px; }
+      .footer { padding: 18px 8px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Main container for all content -->
+  <div class="container">
+    <!-- Navbar with logo, navigation links, and profile dropdown -->
+    <div class="navbar">
+      <div class="logo">
+        <img src="{{ url_for('static', filename='showroom.png') }}" width="32" height="32">
+        <!-- <span>🚗</span> -->
+        <span>SMJ Motors</span>
+      </div>
+      <nav>
+        <a href="{{ url_for('admin_dashboard') }}" class="active">Dashboard</a>
+        <a href="{{ url_for('admin_services') }}">Services</a>
+        <a href="{{ url_for('admin_showroom') }}">Showroom</a>
+        <a href="{{ url_for('admin_appointments') }}">Appointments</a>
+        <a href="#contact-section">Contact</a>
+
+
+      </nav>
+      <div class="profile-dropdown">
+        <button class="profile" id="profileBtn" aria-haspopup="true" aria-expanded="false">👤</button>
+        <div class="dropdown-menu" id="dropdownMenu">
+          <a href="#">Profile</a>
+          <a href="#">Settings</a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="logout">Logout</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin stats dashboard -->
+    <div class="dashboard">
+      <div class="card">
+        <div class="admin-stat">
+          <span class="stat-label">Today's Appointments</span>
+          <span class="stat-value">12</span>
+          <small style="color:var(--muted);">Completed: 5 &nbsp; Pending: 7</small>
+        </div>
+      </div>
+      <div class="card">
+        <div class="admin-stat">
+          <span class="stat-label">Revenue Today</span>
+          <span class="stat-value">$1,245</span>
+          <small style="color:var(--muted);">Services: $985 &nbsp; Parts: $260</small>
+        </div>
+      </div>
+      <div class="card">
+        <div class="admin-stat">
+          <span class="stat-label">Active Mechanics</span>
+          <span class="stat-value">8/10</span>
+          <small style="color:var(--muted);">Busy: 6 &nbsp; Available: 2</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Services section -->
+<div class="admin-section">
+  <div class="admin-header">
+    <span style="font-size:1.1rem;font-weight:600;">Services</span>
+    <a href="{{ url_for('admin_addservice') }}" class="btn panel">Add New Service</a>
+  </div>
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>NAME</th>
+        <th>DESCRIPTION</th>
+        <th>PRICE</th>
+        <th>ACTIONS</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for service in services %}
+      <tr>
+        <td>{{ service.name }}</td>
+        <td>{{ service.description }}</td>
+        <td>${{ "%.2f"|format(service.price) }}</td>
+        <td class="actions">
+          <button class="action-btn" title="Edit">✏️</button>
+          <button class="action-btn" title="Delete">🗑️</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="pagination">
+    <a href="{{ url_for('admin_services') }}" class="pagination-link">See All -></a>
+  </div>
+</div>
+
+<!-- Admin Showroom section -->
+<div class="admin-section">
+  <div class="admin-header">
+    <span style="font-size:1.1rem;font-weight:600;">Showroom</span>
+    <a href="{{ url_for('admin_addcar') }}" class="btn panel">Add New Vehicle</a>
+  </div>
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>MODEL</th>
+        <th>YEAR</th>
+        <th>PRICE</th>
+        <th>STATUS</th>
+        <th>ACTIONS</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for wheel in wheels %}
+      <tr>
+        <td>{{ wheel.model }}</td>
+        <td>{{ wheel.year }}</td>
+        <td>${{ "%.2f"|format(wheel.price) }}</td>
+        <td><span class="status {% if wheel.status == 'available' %}completed{% elif wheel.status == 'reserved' %}progress{% else %}error{% endif %}">{{ wheel.status|title }}</span></td>
+        <td class="actions">
+          <button class="action-btn" title="Edit">✏️</button>
+          <button class="action-btn" title="Delete">🗑️</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="pagination">
+    <a href="{{ url_for('admin_showroom') }}" class="pagination-link">See All -></a>
+  </div>
+</div>
+
+<!-- Admin Appointments section -->
+<div class="admin-section">
+  <div class="admin-header">
+    <span style="font-size:1.1rem;font-weight:600;">Appointments</span>
+    <a href="{{ url_for('admin_addappointment') }}" class="btn panel">Add New Appointment</a>
+  </div>
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>CUSTOMER</th>
+        <th>VEHICLE</th>
+        <th>SERVICE</th>
+        <th>TIME</th>
+        <th>STATUS</th>
+        <th>ACTIONS</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for appt in appointments %}
+      <tr>
+        <td><b>{{ appt.customer }}</b><br></td>
+        <td>{{ appt.vehicle }}</td>
+        <td>{{ appt.service }}</td>
+        <td>{{ appt.time }}</td>
+        <td><span class="status {% if appt.status == 'completed' %}completed{% elif appt.status == 'in progress' %}progress{% else %}error{% endif %}">{{ appt.status|title }}</span></td>
+        <td class="actions">
+          <button class="action-btn" title="Edit">✏️</button>
+          <button class="action-btn" title="Delete">🗑️</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="pagination">
+    <a href="{{ url_for('admin_appointments') }}" class="pagination-link">See All -></a>
+  </div>
+</div>
+
+
+    <!-- Footer with logo, links, services, and contact info -->
+<!-- <div id="footer-placeholder"></div>
+<script>
+  fetch('footerA.html')
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById('footer-placeholder').innerHTML = html;
+    });
+</script> -->
+
+{% include 'footerA.html' %}
+  </div>
+
+  <!-- Scripts for profile dropdown and active tab highlighting -->
+  <script>
+    // Toggle profile dropdown on click
+    const profileBtn = document.getElementById('profileBtn');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+    const profileDropdown = profileBtn.parentElement;
+
+    profileBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      profileDropdown.classList.toggle('open');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!profileDropdown.contains(e.target)) {
+        profileDropdown.classList.remove('open');
+      }
+    });
+
+    // Active tab highlight
+    const navLinks = document.querySelectorAll('.navbar nav a');
+    navLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        // Only update active class for non-contact links
+        if (!this.href.includes('#contact-section')) {
+          navLinks.forEach(l => l.classList.remove('active'));
+          this.classList.add('active');
+        }
+        // For contact link, just scroll (no active class change)
+        if (this.href.includes('#contact-section')) {
+          e.preventDefault();
+          document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+  
+  
+
+</body>
+</html>

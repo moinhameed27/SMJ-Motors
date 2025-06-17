@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Appointments | SMJ Motors</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6c3df4;
+      --secondary: #f5f6fa;
+      --accent: #f0e9ff;
+      --text: #222;
+      --muted: #888;
+      --border: #ececec;
+      --card-radius: 16px;
+      --shadow: 0 2px 12px rgba(44, 62, 80, 0.07);
+      --success: #d1fae5;
+      --warning: #fffbe6;
+      --danger: #ffeaea;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      background: #f7f9fb;
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    a { color: var(--primary); text-decoration: none; }
+    .container {
+      max-width: 1200px;
+      margin: 32px auto;
+      padding: 0 16px;
+    }
+    /* Navbar */
+    .navbar {
+      background: #fff;
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 32px;
+      margin-bottom: 32px;
+    }
+    .navbar .logo {
+      display: flex;
+      align-items: center;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--primary);
+      gap: 10px;
+    }
+    .navbar nav {
+      display: flex;
+      gap: 28px;
+    }
+    .navbar nav a {
+      color: var(--text);
+      font-weight: 500;
+      padding-bottom: 2px;
+      transition: border-bottom 0.2s;
+    }
+    .navbar nav a:hover,
+    .navbar nav a.active {
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary);
+    }
+    /* === Profile dropdown styles === */
+    .profile-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .profile {
+      background: var(--secondary);
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: var(--primary);
+      border: none;
+      cursor: pointer;
+    }
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 44px;
+      min-width: 180px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      z-index: 100;
+      flex-direction: column;
+      padding: 8px 0;
+      transition: opacity 0.18s;
+    }
+    .dropdown-menu a {
+      display: block;
+      padding: 10px 18px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 1rem;
+      transition: background 0.15s;
+    }
+    .dropdown-menu a:hover {
+      background: var(--secondary);
+    }
+    .dropdown-menu .logout {
+      color: #d32f2f;
+    }
+    .dropdown-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 6px 0;
+    }
+    .profile-dropdown.open .dropdown-menu {
+      display: flex;
+      opacity: 1;
+    }
+
+    .btn.panel {
+  display: inline-block;
+  padding: 10px 20px;
+  background: #6c3df4; /* Example: your theme’s primary color */
+  color: #fff;
+  text-align: center;
+  border-radius: 8px;
+  border: 2px solid #4b23b9; /* Example: darker border for contrast */
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  text-decoration: none;
+}
+.btn.panel:hover {
+  background: #4b23b9;
+  border-color: #3a1c8f;
+}
+    /* Appointments Section */
+    .appointments-section {
+      background: #fff;
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow);
+      padding: 32px 24px;
+      margin-bottom: 32px;
+    }
+    .section-title {
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 6px;
+    }
+    .search-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .search-bar input {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border 0.2s;
+    }
+    .search-bar input:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+    .search-bar button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .search-bar button:hover {
+      background: #4b23b9;
+    }
+    .appointments-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    .appointments-table th, .appointments-table td {
+      padding: 12px 8px;
+      text-align: left;
+      font-size: 0.97rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .appointments-table th {
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .appointments-table td {
+      color: var(--text);
+    }
+    .status {
+      border-radius: 8px;
+      padding: 3px 10px;
+      font-size: 0.91rem;
+      font-weight: 500;
+      display: inline-block;
+    }
+    .status.confirmed {
+      background: var(--success);
+      color: #059669;
+    }
+    .status.pending {
+      background: var(--warning);
+      color: #b59f00;
+    }
+    .status.cancelled {
+      background: var(--danger);
+      color: #d32f2f;
+    }
+    .actions {
+    display: flex;
+    gap: 8px;
+    align-items: center; /* This vertically centers the buttons */
+    justify-content: flex-start;
+    height: 100%;
+    }
+    .actions button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 0.91rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .actions button:hover {
+      background: #4b23b9;
+    }
+    .actions button.delete {
+      background: #ff4444;
+    }
+    .add-appointment {
+      display: flex;
+      justify-content: center;
+      margin-top: 24px;
+    }
+    .add-appointment button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .add-appointment button:hover {
+      background: #4b23b9;
+    }
+    .appointments-table td,
+.appointments-table th {
+  vertical-align: middle;
+}
+    /* Responsive styles */
+    @media (max-width: 600px) {
+      .navbar { flex-direction: column; gap: 12px; padding: 12px 8px; }
+      .container { padding: 0 4px; }
+      .appointments-table th, .appointments-table td { padding: 8px 4px; font-size: 0.94rem; }
+      .search-bar { flex-direction: column; }
+      .search-bar input { width: 100%; }
+      .search-bar button { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Navbar -->
+    <div class="navbar">
+      <div class="logo">
+        <img src="{{ url_for('static', filename='showroom.png') }}" width="32" height="32">
+        <span>SMJ Motors</span>
+      </div>
+      <nav>
+        <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('admin_services') }}">Services</a>
+        <a href="{{ url_for('admin_showroom') }}">Showroom</a>
+        <a href="{{ url_for('admin_appointments') }}" class="active">Appointments</a>
+        <a href="#contact-section">Contact</a>
+      </nav>
+      <div class="profile-dropdown">
+        <button class="profile" id="profileBtn" aria-haspopup="true" aria-expanded="false">👤</button>
+        <div class="dropdown-menu" id="dropdownMenu">
+          <a href="#">Profile</a>
+          <a href="#">Settings</a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="logout">Logout</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Appointments Section -->
+    <section class="appointments-section">
+      <div class="section-title">Appointments</div>
+      <div class="search-bar">
+        <input type="text" placeholder="Search appointments...">
+        <button>Search</button>
+      </div>
+      <table class="appointments-table">
+        <thead>
+          <tr>
+            <th>CUSTOMER</th>
+            <th>VEHICLE</th>
+            <th>SERVICE</th>
+            <th>DATE & TIME</th>
+            <th>STATUS</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <!-- <td><b>John Doe</b><br>john@example.com</td> -->
+            <td><b>John Doe</b></td>
+            <td>Toyota Camry</td>
+            <td>Oil Change</td>
+            <td>May 15, 2023 · 10:00 AM</td>
+            <td><span class="status confirmed">Confirmed</span></td>
+            <td class="actions">
+              <button>Edit</button>
+              <button class="delete">Delete</button>
+            </td>
+          </tr>
+          <tr>
+              <!-- <td><b>Jane Smith</b><br>jane@example.com</td> -->
+            <td><b>Jane Smith</b></td>
+            <td>Honda CBR</td>
+            <td>Brake Service</td>
+            <td>May 22, 2023 · 2:30 PM</td>
+            <td><span class="status pending">Pending</span></td>
+            <td class="actions">
+              <button>Edit</button>
+              <button class="delete">Delete</button>
+            </td>
+          </tr>
+          <tr>
+            <!-- <td><b>Mike Johnson</b><br>mike@example.com</td> -->
+            <td><b>Mike Johnson</b></td>
+            <td>Ford Mustang</td>
+            <td>Test Drive</td>
+            <td>June 5, 2023 · 11:00 AM</td>
+            <td><span class="status cancelled">Cancelled</span></td>
+            <td class="actions">
+              <button>Edit</button>
+              <button class="delete">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="add-appointment">
+        <a href="{{ url_for('admin_addappointment') }}" class="btn panel">
+          Add New Appointment
+        </a>
+      </div>
+    </section>
+  </div>
+</body>
+
+<!-- Footer with logo, links, services, and contact info -->
+<!-- <div id="footer-placeholder"></div>
+<script>
+  fetch('footerA.html')
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById('footer-placeholder').innerHTML = html;
+    });
+</script> -->
+
+{% include 'footerA.html' %}
+
+<!-- Scripts for profile dropdown and active tab highlighting -->
+<script>
+    // Toggle profile dropdown on click
+    const profileBtn = document.getElementById('profileBtn');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+    const profileDropdown = profileBtn.parentElement;
+
+    profileBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      profileDropdown.classList.toggle('open');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!profileDropdown.contains(e.target)) {
+        profileDropdown.classList.remove('open');
+      }
+    });
+
+    // Active tab highlight
+    const navLinks = document.querySelectorAll('.navbar nav a');
+    navLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        // Only update active class for non-contact links
+        if (!this.href.includes('#contact-section')) {
+          navLinks.forEach(l => l.classList.remove('active'));
+          this.classList.add('active');
+        }
+        // For contact link, just scroll (no active class change)
+        if (this.href.includes('#contact-section')) {
+          e.preventDefault();
+          document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+</html>
