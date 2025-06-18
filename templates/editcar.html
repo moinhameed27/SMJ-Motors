@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Add Appointment | SMJ Motors</title>
+  <title>Add Car | SMJ Motors</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    /* Same CSS as add-car.html */
     :root {
       --primary: #6c3df4;
       --secondary: #f5f6fa;
@@ -246,10 +245,10 @@
         <span>SMJ Motors</span>
       </div>
       <nav>
-        <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('admin_dashboard') }}" >Dashboard</a>
         <a href="{{ url_for('admin_services') }}">Services</a>
-        <a href="{{ url_for('admin_showroom') }}">Showroom</a>
-        <a href="{{ url_for('admin_appointments') }}" class="active">Appointments</a>
+        <a href="{{ url_for('admin_showroom') }}" class="active">Showroom</a>
+        <a href="{{ url_for('admin_appointments') }}">Appointments</a>
         <a href="#contact-section">Contact</a>
       </nav>
       <div class="profile-dropdown">
@@ -263,75 +262,80 @@
       </div>
     </div>
 
-    <!-- Add Appointment Form -->
-    <!-- Add Appointment Form -->
+    <!-- Edit Wheels Form -->
 <div class="form-card">
-  <h2>Add New Appointment</h2>
-  <form action="{{ url_for('add_appointment') }}" method="POST">
+  <h2>Edit Wheels</h2>
+  <form action="{{ url_for('edit_car', car_id=car._id) }}" method="POST" enctype="multipart/form-data">
     <div class="form-group">
-      <label for="customerN">Customer Name</label>
-      <input type="text" id="customerN" name="customerN" required>
-    </div>
-    <div class="form-group">
-      <label for="customerE">Customer Email</label>
-      <input type="email" id="customerE" name="customerE" required>
-    </div>
-    <div class="form-group">
-      <label for="vehicleT">Vehicle Type</label>
-      <select id="vehicleT" name="vehicleT" required>
-        <option value="motorbike">Motorbike</option>
-        <option value="car">Car</option>
+      <label for="type">Type</label>
+      <select id="type" name="type" required>
+        <option value="motorbike" {% if car.type == 'motorbike' %}selected{% endif %}>Motorbike</option>
+        <option value="car" {% if car.type == 'car' %}selected{% endif %}>Car</option>
       </select>
     </div>
     <div class="form-group">
-      <label for="vehicleN">Vehicle Name</label>
-      <select id="vehicleN" name="vehicleN" required>
-        {% for vehicle in vehicles %}
-          <option value="{{ vehicle._id|string }}">{{ vehicle.model }}</option>
-        {% endfor %}
-      </select>
+      <label for="model">Model</label>
+      <input type="text" id="model" name="model" value="{{ car.model }}" required>
     </div>
     <div class="form-group">
-      <label for="service">Service</label>
-      <select id="service" name="service" required>
-        {% for service in services %}
-          <option value="{{ service._id|string }}">{{ service.name }}</option>
-        {% endfor %}
-      </select>
+      <label for="year">Year</label>
+      <input type="number" id="year" name="year" value="{{ car.year }}" required>
     </div>
     <div class="form-group">
-      <label for="date">Date</label>
-      <input type="date" id="date" name="date" required>
+      <label for="price">Price</label>
+      <input type="number" id="price" name="price" value="{{ car.price }}" required>
     </div>
     <div class="form-group">
-      <label for="time">Time</label>
-      <input type="time" id="time" name="time" required>
+      <label for="image">Image</label>
+      <input type="file" id="image" name="image" accept="image/*">
+      {% if car.image_url %}
+        <br><img src="{{ car.image_url }}" alt="Current Image" style="max-width:120px; margin-top:8px;">
+        <input type="hidden" name="existing_image" value="{{ car.image_url }}">
+      {% endif %}
+    </div>
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea id="description" name="description" rows="3">{{ car.description }}</textarea>
     </div>
     <div class="form-group">
       <label for="status">Status</label>
       <select id="status" name="status" required>
-        <option value="pending">Pending</option>
-        <option value="confirmed">Confirmed</option>
-        <option value="completed">Completed</option>
-        <option value="cancelled">Cancelled</option>
+        <option value="available" {% if car.status == 'available' %}selected{% endif %}>Available</option>
+        <option value="reserved" {% if car.status == 'reserved' %}selected{% endif %}>Reserved</option>
+        <option value="sold" {% if car.status == 'sold' %}selected{% endif %}>Sold</option>
       </select>
     </div>
-    <div class="form-group">
-      <label for="notes">Notes</label>
-      <textarea id="notes" name="notes" rows="3"></textarea>
-    </div>
     <div class="form-actions">
-      <button type="reset" class="secondary">Clear</button>
-      <button type="submit">Add Appointment</button>
+      <button type="reset" class="secondary">Reset</button>
+      <button type="submit">Update Wheels</button>
     </div>
   </form>
 </div>
-
   </div>
- 
+<!-- Notification Modal (hidden by default) -->
+<!-- <div id="notification-modal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #4CAF50; color: white; padding: 24px; border-radius: 8px; z-index: 1000;">
+  Item added successfully!
+  <button onclick="document.getElementById('notification-modal').style.display = 'none'" style="margin-top: 12px; background: white; color: #4CAF50; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+    Close
+  </button>
+</div> -->
+
+<!-- <script>
+  // Check if the URL has a query parameter (e.g., ?added=1)
+  if (window.location.search.includes('added=1')) {
+    document.getElementById('notification-modal').style.display = 'block';
+  }
+</script> -->
 </body>
-
-
+<!-- Footer with logo, links, services, and contact info -->
+<!-- <div id="footer-placeholder"></div>
+<script>
+  fetch('footerA.html')
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById('footer-placeholder').innerHTML = html;
+    });
+</script> -->
 
 {% include 'footerA.html' %}
 

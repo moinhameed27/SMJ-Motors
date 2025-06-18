@@ -274,115 +274,44 @@
     <section class="services-section">
       <div class="section-title">Motorbike Services</div>
       <div class="services-grid">
+        {% for service in motorbike_services %}
         <div class="service-card">
-          <div class="service-icon">🏍️</div>
-          <h3>Motorbike Oil Change</h3>
-          <p>Keep your motorbike engine running smoothly with regular oil changes.</p>
-          <div class="service-price">$39.99</div>
+          <div class="service-icon">{{ icon_map[service.icon] }}</div>
+          <h3>{{ service.name }}</h3>
+          <p>{{ service.description }}</p>
+          <div class="service-price">${{ "%.2f"|format(service.price) }}</div>
           <div class="service-actions">
-            <button>Edit</button>
-            <button class="delete">Delete</button>
+            <a href="{{ url_for('edit_service', service_id=service._id) }}" class="action-btn">Edit</a>
+            <form action="{{ url_for('delete_service', service_id=service._id) }}" method="POST" style="display:inline;">
+              <button type="button" class="action-btn delete" onclick="confirmDelete(this)">Delete</button>
+            </form>
           </div>
         </div>
-        <div class="service-card">
-          <div class="service-icon">🔧</div>
-          <h3>Chain Adjustment & Lubrication</h3>
-          <p>Ensure optimal chain tension and lubrication for safe riding.</p>
-          <div class="service-price">$29.99</div>
-          <div class="service-actions">
-            <button>Edit</button>
-            <button class="delete">Delete</button>
-          </div>
-        </div>
-        <div class="service-card">
-          <div class="service-icon">🛞</div>
-          <h3>Tire Replacement & Balancing</h3>
-          <p>Professional tire replacement and balancing for motorbikes.</p>
-          <div class="service-price">$49.99</div>
-          <div class="service-actions">
-            <button>Edit</button>
-            <button class="delete">Delete</button>
-          </div>
-        </div>
-        <div class="service-card">
-          <div class="service-icon">🔋</div>
-          <h3>Battery Check & Replacement</h3>
-          <p>Keep your motorbike battery healthy and replace when needed.</p>
-          <div class="service-price">$19.99</div>
-          <div class="service-actions">
-            <button>Edit</button>
-            <button class="delete">Delete</button>
-          </div>
-        </div>
-        <div class="service-card">
-          <div class="service-icon">🔍</div>
-          <h3>Diagnostic & Inspection</h3>
-          <p>Comprehensive diagnostics and safety inspections for motorbikes.</p>
-          <div class="service-price">$59.99</div>
-          <div class="service-actions">
-            <button>Edit</button>
-           <button class="delete">Delete</button>
-          </div>
-        </div>
+        {% endfor %}
       </div>
     </section>
-
+    
     <section class="services-section">
       <div class="section-title">Car Services</div>
       <div class="services-grid">
+        {% for service in car_services %}
         <div class="service-card">
-          <div class="service-icon">🚗</div>
-          <h3>Car Oil Change</h3>
-          <p>Regular oil changes to keep your car engine running efficiently.</p>
-          <div class="service-price">$39.99</div>
+          <div class="service-icon">{{ icon_map[service.icon] }}</div>
+          <h3>{{ service.name }}</h3>
+          <p>{{ service.description }}</p>
+          <div class="service-price">${{ "%.2f"|format(service.price) }}</div>
           <div class="service-actions">
-            <button>Edit</button>
-            <button class="delete">Delete</button>
+            <a href="{{ url_for('edit_service', service_id=service._id) }}" class="action-btn">Edit</a>
+            <form action="{{ url_for('delete_service', service_id=service._id) }}" method="POST" style="display:inline;">
+              <button type="button" class="action-btn delete" onclick="confirmDelete(this)">Delete</button>
+            </form>
           </div>
         </div>
-        <div class="service-card">
-          <div class="service-icon">⚙️</div>
-          <h3>Engine Tune-Up</h3>
-          <p>Comprehensive engine maintenance for optimal car performance.</p>
-          <div class="service-price">$149.99</div>
-          <div class="service-actions">
-            <button>Edit</button>
-            <button class="delete">Delete</button>
-          </div>
-        </div>
-        <div class="service-card">
-          <div class="service-icon">🛞</div>
-          <h3>Tire Rotation & Alignment</h3>
-          <p>Extend tire life and improve safety with rotation and alignment.</p>
-          <div class="service-price">$49.99</div>
-          <div class="service-actions">
-            <button>Edit</button>
-            <button class="delete">Delete</button>
-          </div>
-        </div>
-        <div class="service-card">
-          <div class="service-icon">🧰</div>
-          <h3>Brake Service</h3>
-          <p>Inspection and repair of brake systems for safe driving.</p>
-          <div class="service-price">$59.99</div>
-          <div class="service-actions">
-            <button>Edit</button>
-            <button class="delete">Delete</button>
-          </div>
-        </div>
-        <div class="service-card">
-          <div class="service-icon">🔍</div>
-          <h3>Vehicle Inspection & Diagnostics</h3>
-          <p>Full vehicle diagnostics and safety inspections.</p>
-          <div class="service-price">$79.99</div>
-          <div class="service-actions">
-            <button>Edit</button>
-            <button class="delete">Delete</button>
-          </div>
-        </div>
+        {% endfor %}
       </div>
     </section>
-
+    
+    <!-- Add New Service Button -->
     <div class="add-service">
       <a href="{{ url_for('admin_addservice') }}" class="btn panel">
         Add New Service
@@ -438,5 +367,16 @@
       });
     });
     
+
+    
   </script>
+
+<script>
+  function confirmDelete(button) {
+    if (confirm('Are you sure you want to delete this item?')) {
+      button.form.submit();
+    }
+  }
+  </script>
+  
 </html>

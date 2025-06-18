@@ -287,7 +287,7 @@
         <span>SMJ Motors</span>
       </div>
       <nav>
-        <a href="user.html">Home</a>
+        <a href="{{ url_for('user_dashboard') }}">Home</a>
       </nav>
     </div>
 
@@ -360,14 +360,7 @@
     </section>
 
       <!-- Footer with logo, links, services, and contact info -->
-      <div id="footer-placeholder"></div>
-      <script>
-        fetch('footer.html')
-          .then(response => response.text())
-          .then(html => {
-            document.getElementById('footer-placeholder').innerHTML = html;
-          });
-      </script>
+      {% include 'footer.html' %}
   </div>
 </body>
 </html>

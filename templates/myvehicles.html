@@ -322,58 +322,39 @@
         <button class="profile" id="profileBtn" aria-haspopup="true" aria-expanded="false">👤</button>
         <div class="dropdown-menu" id="dropdownMenu">
           <a href="#">Profile</a>
-          <a href="{{ url_for('my_vehicles') }}">My Vehicles</a>
+          <a href="#">My Vehicles</a>
           <a href="#">Service History</a>
           <a href="#">Settings</a>
           <div class="dropdown-divider"></div>
-          <a href="{{ url_for('logout') }}">Logout</a>
+          <a href="login.html" class="logout">Logout</a>
         </div>
       </div>
     </div>
 
-    <h1>Our Showroom</h1>
+    <h1>My Vehicles</h1>
 
-    <!-- Motorbikes Section -->
-<section class="showroom-section">
-  <div class="section-title">Motorbikes</div>
-  <div class="showroom-grid">
-    {% for bike in motorbikes %}
-    <div class="vehicle-card">
-      <img src="{{ bike.image_url }}" alt="{{ bike.model }}" class="vehicle-img">
-      <h3>{{ bike.model }}</h3>
-      <p>{{ bike.year }} Model | {{ bike.engine }}</p>
-      <p>{{ bike.description }}</p>
-      <div class="vehicle-price">${{ "{:,.2f}".format(bike.price) }}</div>
-      <div class="vehicle-status">{{ bike.status|title }}</div>
-      <div class="vehicle-actions">
-        <button class="vehicle-btn" onclick="confirmPurchase('{{ bike._id }}')">Purchase</button>
-        <button class="vehicle-btn secondary">Book Test Ride</button>
-      </div>
+  <section class="showroom-section">
+    <div class="section-title">Your Garage</div>
+    <div class="showroom-grid">
+      {% if user_vehicles %}
+        {% for vehicle in user_vehicles %}
+        <div class="vehicle-card">
+          <img src="{{ vehicle.image_url }}" alt="{{ vehicle.model }}" class="vehicle-img">
+          <h3>{{ vehicle.model }}</h3>
+          <p>{{ vehicle.year }} Model{% if vehicle.engine %} | {{ vehicle.engine }}{% elif vehicle.body_type %} | {{ vehicle.body_type }}{% endif %}</p>
+          <p>{{ vehicle.description }}</p>
+          <div class="vehicle-price">${{ "{:,.2f}".format(vehicle.price) }}</div>
+          <div class="vehicle-status">{{ vehicle.status|title }}</div>
+          <div class="vehicle-actions">
+            <button class="vehicle-btn" onclick="confirmSell('{{ vehicle._id }}')">Sell</button>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div>No vehicles in your garage yet.</div>
+      {% endif %}
     </div>
-    {% endfor %}
-  </div>
-</section>
-
-<!-- Cars Section -->
-<section class="showroom-section">
-  <div class="section-title">Cars</div>
-  <div class="showroom-grid">
-    {% for car in cars %}
-    <div class="vehicle-card">
-      <img src="{{ car.image_url }}" alt="{{ car.model }}" class="vehicle-img">
-      <h3>{{ car.model }}</h3>
-      <p>{{ car.year }} Model | {{ car.body_type }}</p>
-      <p>{{ car.description }}</p>
-      <div class="vehicle-price">${{ "{:,.2f}".format(car.price) }}</div>
-      <div class="vehicle-status">{{ car.status|title }}</div>
-      <div class="vehicle-actions">
-        <button class="vehicle-btn" onclick="confirmPurchase('{{ car._id }}')">Purchase</button>
-        <button class="vehicle-btn secondary">Book Test Drive</button>
-      </div>
-    </div>
-    {% endfor %}
-  </div>
-</section>
+  </section>
 
 
     <!-- Footer with logo, links, services, and contact info -->
@@ -436,6 +417,27 @@
   }
   </script>
   
+
+  <script>
+    function confirmSell(vehicleId) {
+      if (confirm('Are you sure you want to sell this vehicle?')) {
+        fetch('/sell_vehicle', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({vehicle_id: vehicleId})
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert('Vehicle sold successfully!');
+            window.location.reload();
+          } else {
+            alert('Sell failed: ' + data.error);
+          }
+        });
+      }
+    }
+    </script>
   
 </body>
 </html>

@@ -180,6 +180,7 @@
     }
     .appointment-card .status.confirmed { background: var(--success); color: #059669; }
     .appointment-card .status.pending { background: var(--warning); color: #b59f00; }
+    
     /* Appointment form */
     .appointment-form {
       background: #fff;
@@ -244,6 +245,20 @@
       background: var(--secondary);
       color: var(--primary);
     }
+
+    .action-btn.delete {
+    background-color: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 8px;
+  }
+  .action-btn.delete:hover {
+    background-color: #cc0000;
+  }
     /* Page title */
     h1 {
       text-align: center;
@@ -335,96 +350,89 @@
         <span>SMJ Motors</span>
       </div>
       <nav>
-        <a href="user.html">Home</a>
-        <a href="services.html">Services</a>
-        <a href="appointments.html" class="active">Appointments</a>
-        <a href="showroom.html">Showroom</a>
+        <a href="{{ url_for('user_dashboard') }}" >Home</a>
+        <a href="{{ url_for('services') }}">Services</a>
+        <a href="{{ url_for('appointments') }}" class="active">Appointments</a>
+        <a href="{{ url_for('showroom') }}">Showroom</a>
         <a href="#contact-section">Contact</a>
       </nav>
       <div class="profile-dropdown">
         <button class="profile" id="profileBtn" aria-haspopup="true" aria-expanded="false">👤</button>
         <div class="dropdown-menu" id="dropdownMenu">
           <a href="#">Profile</a>
-          <a href="#">My Vehicles</a>
+          <a href="{{ url_for('my_vehicles') }}">My Vehicles</a>
           <a href="#">Service History</a>
           <a href="#">Settings</a>
           <div class="dropdown-divider"></div>
-          <a href="#" class="logout">Logout</a>
+          <a href="{{ url_for('logout') }}">Logout</a>
         </div>
       </div>
     </div>
 
     <h1>Your Appointments</h1>
 
-    <!-- Appointments List -->
     <section class="appointments-section">
       <div class="section-title">Upcoming Appointments</div>
       <div class="appointments-list">
+        {% for appt in user_appointments %}
         <div class="appointment-card">
-          <h3>Oil Change & Inspection</h3>
-          <p>Toyota Camry</p>
-          <p class="time">May 15, 2023 · 10:00 AM</p>
-          <span class="status confirmed">Confirmed</span>
+          <h3>{{ appt.service_name or appt.service }}</h3>
+          <p>{{ appt.vehicleN_name or appt.vehicleN }}</p>
+          <p class="time">{{ appt.date }} · {{ appt.time }}</p>
+          <span class="status {% if appt.status == 'confirmed' %}confirmed{% else %}pending{% endif %}">{{ appt.status|title }}</span>
+          <form action="{{ url_for('cancel_appointment', appointment_id=appt._id) }}" method="POST" style="display:inline;">
+            <button type="button" class="action-btn delete" onclick="confirmDelete(this)">Delete</button>
+          </form>
         </div>
+        {% else %}
         <div class="appointment-card">
-          <h3>Brake Service</h3>
-          <p>Honda CBR</p>
-          <p class="time">May 22, 2023 · 2:30 PM</p>
-          <span class="status pending">Pending</span>
+          <p>No upcoming appointments</p>
         </div>
-        <div class="appointment-card">
-          <h3>Showroom Visit</h3>
-          <p>Test Drive: Ford Mustang</p>
-          <p class="time">June 5, 2023 · 11:00 AM</p>
-          <span class="status confirmed">Confirmed</span>
-        </div>
+        {% endfor %}
       </div>
     </section>
+    
 
-    <!-- Appointment Booking Form -->
     <section class="appointment-form">
       <h2>Book New Appointment</h2>
-      <form>
+      <form action="{{ url_for('book_appointment') }}" method="POST">
         <div class="form-group">
-          <label for="appointment-type">Appointment Type</label>
-          <select id="appointment-type" required>
+          <label for="appointment-type">Vehicle Type</label>
+          <select id="appointment-type" name="vehicleT" required>
             <option value="">Select type</option>
-            <option value="service">Vehicle Service</option>
-            <!-- <option value="test-drive">Showroom Test Drive</option> -->
+            <option value="motorbike">Motorbike</option>
+            <option value="car">Car</option>
           </select>
         </div>
         <div class="form-group">
-          <label for="vehicle">Vehicle</label>
-          <select id="vehicle" required>
+          <label for="vehicleN">Vehicle</label>
+          <select id="vehicleN" name="vehicleN" required>
             <option value="">Select vehicle</option>
-            <option value="toyota-camry">Toyota Camry</option>
-            <option value="honda-cbr">Honda CBR</option>
-            <option value="ford-mustang">Ford Mustang</option>
-            <!-- <option value="showroom-visit">Showroom Visit (No Vehicle)</option> -->
+            {% for vehicle in all_user_vehicles %}
+              <option value="{{ vehicle._id|string }}">{{ vehicle.model }}</option>
+            {% endfor %}
           </select>
         </div>
         <div class="form-group">
           <label for="service">Service Type</label>
-          <select id="service" required>
+          <select id="service" name="service" required>
             <option value="">Select service</option>
-            <option value="oil-change">Oil Change</option>
-            <option value="brake-service">Brake Service</option>
-            <option value="engine-tuneup">Engine Tune-Up</option>
-            <option value="test-drive">Test Drive</option>
-            <option value="inspection">Inspection</option>
+            {% for service in all_services %}
+              <option value="{{ service._id|string }}">{{ service.name }}</option>
+            {% endfor %}
           </select>
         </div>
         <div class="form-group">
           <label for="date">Date</label>
-          <input type="date" id="date" required>
+          <input type="date" id="date" name="date" required>
         </div>
         <div class="form-group">
           <label for="time">Time</label>
-          <input type="time" id="time" required>
+          <input type="time" id="time" name="time" required>
         </div>
         <div class="form-group">
           <label for="notes">Notes (Optional)</label>
-          <textarea id="notes" rows="3"></textarea>
+          <textarea id="notes" name="notes" rows="3"></textarea>
         </div>
         <div class="form-actions">
           <button type="reset" class="secondary">Clear</button>
@@ -432,16 +440,11 @@
         </div>
       </form>
     </section>
+    
+    
 
     <!-- Footer with logo, links, services, and contact info -->
-    <div id="footer-placeholder"></div>
-<script>
-  fetch('footer.html')
-    .then(response => response.text())
-    .then(html => {
-      document.getElementById('footer-placeholder').innerHTML = html;
-    });
-</script>
+    {% include 'footer.html' %}
 
   <script>
     // Profile dropdown toggle (keep if you have it)
@@ -477,5 +480,14 @@
       });
     });
   </script>  
+
+<script>
+  function confirmDelete(button) {
+    if (confirm('Are you sure you want to delete this appointment?')) {
+      button.form.submit();
+    }
+  }
+  </script>
+
 </body>
 </html>

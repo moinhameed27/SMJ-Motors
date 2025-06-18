@@ -284,84 +284,49 @@
       </div>
     </div>
 
-    <!-- Showroom Section -->
+    <!-- Showroom sections for motorbikes and cars -->
     <section class="showroom-section">
       <div class="section-title">Motorbikes</div>
       <div class="showroom-grid">
+        {% for motorbike in motorbikes %}
         <div class="vehicle-card">
-          <img src="/static/motorbike1.jpg" alt="Honda CBR" class="vehicle-img">
-          <h3>Honda CBR</h3>
-          <p>2023 Model | 150cc</p>
-          <div class="vehicle-price">$2,499</div>
-          <div class="vehicle-status">Available</div>
+          <img src="{{ motorbike.image_url }}" alt="{{ motorbike.model }}" class="vehicle-img">
+          <h3>{{ motorbike.model }}</h3>
+          <p>{{ motorbike.year }} Model</p>
+          <div class="vehicle-price">${{ "%.2f"|format(motorbike.price) }}</div>
+          <div class="vehicle-status">{{ motorbike.status|title }}</div>
           <div class="vehicle-actions">
-            <button>Edit</button>
-            <button class="delete">Delete</button>
+            <a href="{{ url_for('edit_car', car_id=motorbike._id) }}" class="action-btn">Edit</a>
+            <form action="{{ url_for('delete_wheel', wheel_id=motorbike._id) }}" method="POST" style="display:inline;">
+              <button type="button" class="action-btn delete" onclick="confirmDelete(this)">Delete</button>
+            </form>
           </div>
         </div>
-        <div class="vehicle-card">
-          <img src="/static/motorbike2.jpg" alt="Yamaha YZF" class="vehicle-img">
-          <h3>Yamaha YZF</h3>
-          <p>2022 Model | 200cc</p>
-          <div class="vehicle-price">$2,799</div>
-          <div class="vehicle-status">Available</div>
-          <div class="vehicle-actions">
-            <button>Edit</button>
-            <button class="delete">Delete</button>
-          </div>
-        </div>
-        <div class="vehicle-card">
-          <img src="/static/motorbike3.jpg" alt="Suzuki GSX" class="vehicle-img">
-          <h3>Suzuki GSX</h3>
-          <p>2023 Model | 250cc</p>
-          <div class="vehicle-price">$3,099</div>
-          <div class="vehicle-status">Available</div>
-          <div class="vehicle-actions">
-            <button>Edit</button>
-            <button class="delete">Delete</button>
-          </div>
-        </div>
+        {% endfor %}
       </div>
     </section>
-
+    
     <section class="showroom-section">
       <div class="section-title">Cars</div>
       <div class="showroom-grid">
+        {% for car in cars %}
         <div class="vehicle-card">
-          <img src="/static/car1.jpg" alt="Toyota Camry" class="vehicle-img">
-          <h3>Toyota Camry</h3>
-          <p>2022 Model | Sedan</p>
-          <div class="vehicle-price">$24,999</div>
-          <div class="vehicle-status">Available</div>
+          <img src="{{ car.image_url }}" alt="{{ car.model }}" class="vehicle-img">
+          <h3>{{ car.model }}</h3>
+          <p>{{ car.year }} Model</p>
+          <div class="vehicle-price">${{ "%.2f"|format(car.price) }}</div>
+          <div class="vehicle-status">{{ car.status|title }}</div>
           <div class="vehicle-actions">
-            <button>Edit</button>
-            <button class="delete">Delete</button>
+            <a href="{{ url_for('edit_car', car_id=car._id) }}" class="action-btn">Edit</a>
+            <form action="{{ url_for('delete_wheel', wheel_id=car._id) }}" method="POST" style="display:inline;">
+              <button type="button" class="action-btn delete" onclick="confirmDelete(this)">Delete</button>
+            </form>
           </div>
         </div>
-        <div class="vehicle-card">
-          <img src="/static/car2.jpg" alt="Honda Civic" class="vehicle-img">
-          <h3>Honda Civic</h3>
-          <p>2023 Model | Sedan</p>
-          <div class="vehicle-price">$22,499</div>
-          <div class="vehicle-status">Available</div>
-          <div class="vehicle-actions">
-            <button>Edit</button>
-            <button class="delete">Delete</button>
-          </div>
-        </div>
-        <div class="vehicle-card">
-          <img src="/static/car3.jpg" alt="Ford Mustang" class="vehicle-img">
-          <h3>Ford Mustang</h3>
-          <p>2021 Model | Coupe</p>
-          <div class="vehicle-price">$34,499</div>
-          <div class="vehicle-status">Available</div>
-          <div class="vehicle-actions">
-            <button>Edit</button>
-            <button class="delete">Delete</button>
-          </div>
-        </div>
+        {% endfor %}
       </div>
     </section>
+    
 
     <div class="add-vehicle">
       <a href="{{ url_for('admin_addcar') }}" class="btn panel">
@@ -420,4 +385,13 @@
     });
     
   </script>
+
+<script>
+  function confirmDelete(button) {
+    if (confirm('Are you sure you want to delete this item?')) {
+      button.form.submit();
+    }
+  }
+  </script>
+  
 </html>

@@ -263,31 +263,30 @@
       </div>
     </div>
 
-    <!-- Add Appointment Form -->
-    <!-- Add Appointment Form -->
+    <!-- Edit Appointment Form -->
 <div class="form-card">
-  <h2>Add New Appointment</h2>
-  <form action="{{ url_for('add_appointment') }}" method="POST">
+  <h2>Edit Appointment</h2>
+  <form action="{{ url_for('edit_appointment', appointment_id=appointment._id) }}" method="POST">
     <div class="form-group">
       <label for="customerN">Customer Name</label>
-      <input type="text" id="customerN" name="customerN" required>
+      <input type="text" id="customerN" name="customerN" value="{{ appointment.customerN }}" required>
     </div>
     <div class="form-group">
       <label for="customerE">Customer Email</label>
-      <input type="email" id="customerE" name="customerE" required>
+      <input type="email" id="customerE" name="customerE" value="{{ appointment.customerE }}" required>
     </div>
     <div class="form-group">
       <label for="vehicleT">Vehicle Type</label>
       <select id="vehicleT" name="vehicleT" required>
-        <option value="motorbike">Motorbike</option>
-        <option value="car">Car</option>
+        <option value="motorbike" {% if appointment.vehicleT == 'motorbike' %}selected{% endif %}>Motorbike</option>
+        <option value="car" {% if appointment.vehicleT == 'car' %}selected{% endif %}>Car</option>
       </select>
     </div>
     <div class="form-group">
       <label for="vehicleN">Vehicle Name</label>
       <select id="vehicleN" name="vehicleN" required>
         {% for vehicle in vehicles %}
-          <option value="{{ vehicle._id|string }}">{{ vehicle.model }}</option>
+          <option value="{{ vehicle._id|string }}" {% if appointment.vehicleN == vehicle._id|string %}selected{% endif %}>{{ vehicle.model }}</option>
         {% endfor %}
       </select>
     </div>
@@ -295,42 +294,41 @@
       <label for="service">Service</label>
       <select id="service" name="service" required>
         {% for service in services %}
-          <option value="{{ service._id|string }}">{{ service.name }}</option>
+          <option value="{{ service._id|string }}" {% if appointment.service == service._id|string %}selected{% endif %}>{{ service.name }}</option>
         {% endfor %}
       </select>
-    </div>
+    </div>    
     <div class="form-group">
       <label for="date">Date</label>
-      <input type="date" id="date" name="date" required>
+      <input type="date" id="date" name="date" value="{{ appointment.date }}" required>
     </div>
     <div class="form-group">
       <label for="time">Time</label>
-      <input type="time" id="time" name="time" required>
+      <input type="time" id="time" name="time" value="{{ appointment.time }}" required>
     </div>
     <div class="form-group">
       <label for="status">Status</label>
       <select id="status" name="status" required>
-        <option value="pending">Pending</option>
-        <option value="confirmed">Confirmed</option>
-        <option value="completed">Completed</option>
-        <option value="cancelled">Cancelled</option>
+        <option value="pending" {% if appointment.status == 'pending' %}selected{% endif %}>Pending</option>
+        <option value="confirmed" {% if appointment.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+        <option value="completed" {% if appointment.status == 'completed' %}selected{% endif %}>Completed</option>
+        <option value="cancelled" {% if appointment.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
       </select>
     </div>
     <div class="form-group">
       <label for="notes">Notes</label>
-      <textarea id="notes" name="notes" rows="3"></textarea>
+      <textarea id="notes" name="notes" rows="3">{{ appointment.notes }}</textarea>
     </div>
     <div class="form-actions">
-      <button type="reset" class="secondary">Clear</button>
-      <button type="submit">Add Appointment</button>
+      <button type="reset" class="secondary">Reset</button>
+      <button type="submit">Update Appointment</button>
     </div>
   </form>
 </div>
 
   </div>
- 
+  
 </body>
-
 
 
 {% include 'footerA.html' %}

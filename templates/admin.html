@@ -381,7 +381,7 @@
         <a href="{{ url_for('admin_appointments') }}">Appointments</a>
         <a href="#contact-section">Contact</a>
 
-
+ 
       </nav>
       <div class="profile-dropdown">
         <button class="profile" id="profileBtn" aria-haspopup="true" aria-expanded="false">👤</button>
@@ -389,7 +389,7 @@
           <a href="#">Profile</a>
           <a href="#">Settings</a>
           <div class="dropdown-divider"></div>
-          <a href="#" class="logout">Logout</a>
+          <a href="{{ url_for('logout') }}" class="logout">Logout</a>
         </div>
       </div>
     </div>
@@ -399,25 +399,32 @@
       <div class="card">
         <div class="admin-stat">
           <span class="stat-label">Today's Appointments</span>
-          <span class="stat-value">12</span>
-          <small style="color:var(--muted);">Completed: 5 &nbsp; Pending: 7</small>
+          <span class="stat-value" id="appointments-total">12</span>
+          <small style="color:var(--muted);">
+            Completed: <span id="appointments-completed">6</span> &nbsp; Pending: <span id="appointments-pending">6</span>
+          </small>
         </div>
       </div>
       <div class="card">
         <div class="admin-stat">
           <span class="stat-label">Revenue Today</span>
-          <span class="stat-value">$1,245</span>
-          <small style="color:var(--muted);">Services: $985 &nbsp; Parts: $260</small>
+          <span class="stat-value" id="revenue-total">$1,526</span>
+          <small style="color:var(--muted);">
+            Services: <span id="revenue-services">$1,351</span> &nbsp; Parts: <span id="revenue-parts">$175</span>
+          </small>
         </div>
       </div>
       <div class="card">
         <div class="admin-stat">
           <span class="stat-label">Active Mechanics</span>
-          <span class="stat-value">8/10</span>
-          <small style="color:var(--muted);">Busy: 6 &nbsp; Available: 2</small>
+          <span class="stat-value" id="mechanics-total">7/10</span>
+          <small style="color:var(--muted);">
+            Busy: <span id="mechanics-busy">7</span> &nbsp; Available: <span id="mechanics-available">3</span>
+          </small>
         </div>
       </div>
     </div>
+    
 
     <!-- Admin Services section -->
 <div class="admin-section">
@@ -441,8 +448,10 @@
         <td>{{ service.description }}</td>
         <td>${{ "%.2f"|format(service.price) }}</td>
         <td class="actions">
-          <button class="action-btn" title="Edit">✏️</button>
-          <button class="action-btn" title="Delete">🗑️</button>
+          <a href="{{ url_for('edit_service', service_id=service._id) }}" class="action-btn" title="Edit">✏️</a>
+          <form action="{{ url_for('delete_service', service_id=service._id) }}" method="POST" style="display:inline;">
+            <button type="button" class="action-btn" title="Delete" onclick="confirmDelete(this)">🗑️</button>
+          </form>
         </td>
       </tr>
       {% endfor %}
@@ -477,8 +486,10 @@
         <td>${{ "%.2f"|format(wheel.price) }}</td>
         <td><span class="status {% if wheel.status == 'available' %}completed{% elif wheel.status == 'reserved' %}progress{% else %}error{% endif %}">{{ wheel.status|title }}</span></td>
         <td class="actions">
-          <button class="action-btn" title="Edit">✏️</button>
-          <button class="action-btn" title="Delete">🗑️</button>
+          <a href="{{ url_for('edit_car', car_id=wheel._id) }}" class="action-btn" title="Edit">✏️</a>
+          <form action="{{ url_for('delete_wheel', wheel_id=wheel._id) }}" method="POST" style="display:inline;">
+            <button type="button" class="action-btn" title="Delete" onclick="confirmDelete(this)">🗑️</button>
+          </form>
         </td>
       </tr>
       {% endfor %}
@@ -509,14 +520,16 @@
     <tbody>
       {% for appt in appointments %}
       <tr>
-        <td><b>{{ appt.customer }}</b><br></td>
-        <td>{{ appt.vehicle }}</td>
-        <td>{{ appt.service }}</td>
+        <td><b>{{ appt.customerN }}</b><br></td>
+        <td>{{ appt.vehicle_name }}</td>
+        <td>{{ appt.service_name }}</td>
         <td>{{ appt.time }}</td>
         <td><span class="status {% if appt.status == 'completed' %}completed{% elif appt.status == 'in progress' %}progress{% else %}error{% endif %}">{{ appt.status|title }}</span></td>
         <td class="actions">
-          <button class="action-btn" title="Edit">✏️</button>
-          <button class="action-btn" title="Delete">🗑️</button>
+          <a href="{{ url_for('edit_appointment', appointment_id=appt._id) }}" class="action-btn" title="Edit">✏️</a>
+          <form action="{{ url_for('delete_appointment', appointment_id=appt._id) }}" method="POST" style="display:inline;">
+            <button type="button" class="action-btn" title="Delete" onclick="confirmDelete(this)">🗑️</button>
+          </form>
         </td>
       </tr>
       {% endfor %}
@@ -578,6 +591,45 @@
     });
   </script>
   
+
+  <script>
+    function confirmDelete(button) {
+      if (confirm('Are you sure you want to delete this item?')) {
+        // Find the parent form and submit it
+        button.form.submit();
+      }
+    }
+    </script>
+
+<script>
+  // Randomize stats on page load (for demo only)
+  window.onload = function() {
+    // Appointments
+    const total = 8 + Math.floor(Math.random() * 10); // 8 to 17
+    const completed = Math.floor(Math.random() * (total / 2)) + 1;
+    const pending = total - completed;
+    document.getElementById('appointments-total').textContent = total;
+    document.getElementById('appointments-completed').textContent = completed;
+    document.getElementById('appointments-pending').textContent = pending;
+  
+    // Revenue
+    const services = 800 + Math.floor(Math.random() * 1000); // 800 to 1799
+    const parts = 100 + Math.floor(Math.random() * 200); // 100 to 299
+    const revenue = services + parts;
+    document.getElementById('revenue-total').textContent = '$' + revenue;
+    document.getElementById('revenue-services').textContent = '$' + services;
+    document.getElementById('revenue-parts').textContent = '$' + parts;
+  
+    // Mechanics
+    const active = Math.floor(Math.random() * 5) + 6; // 6 to 10
+    const busy = Math.floor(Math.random() * (active - 1)) + 1; // 1 to active-1
+    const available = active - busy;
+
+    document.getElementById('mechanics-total').textContent = active;
+    document.getElementById('mechanics-busy').textContent = busy;
+    document.getElementById('mechanics-available').textContent = available;
+  };
+  </script>
   
 
 </body>

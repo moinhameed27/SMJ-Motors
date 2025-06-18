@@ -403,78 +403,82 @@
     <!-- Navbar with logo, navigation links, and profile dropdown -->
     <div class="navbar">
       <div class="logo">
-        <!-- <span>🚗</span> -->
-        <img src="/static/showroom.png" width="32" height="32">
+        <img src="{{ url_for('static', filename='showroom.png') }}" width="32" height="32">
         <span>SMJ Motors</span>
       </div>
       <nav>
-        <a href="#" class="active">Home</a>
-        <a href="services.html">Services</a>
-        <a href="appointments.html">Appointments</a>
-        <a href="showroom.html">Showroom</a>
+        <a href="{{ url_for('user_dashboard') }}" class="active">Home</a>
+        <a href="{{ url_for('services') }}">Services</a>
+        <a href="{{ url_for('appointments') }}">Appointments</a>
+        <a href="{{ url_for('showroom') }}">Showroom</a>
         <a href="#contact-section">Contact</a>
       </nav>
       <div class="profile-dropdown">
         <button class="profile" id="profileBtn" aria-haspopup="true" aria-expanded="false">👤</button>
         <div class="dropdown-menu" id="dropdownMenu">
           <a href="#">Profile</a>
-          <a href="#">My Vehicles</a>
+          <a href="{{ url_for('my_vehicles') }}">My Vehicles</a>
           <a href="#">Service History</a>
           <a href="#">Settings</a>
           <div class="dropdown-divider"></div>
-          <a href="#" class="logout">Logout</a>
+          <a href="{{ url_for('logout') }}">Logout</a>
         </div>
       </div>
     </div>
+    
 
     <!-- Dashboard grid: vehicles, upcoming services, recent activities -->
     <div class="dashboard">
-      <!-- Your Vehicles card -->
-      <div class="card">
-        <div class="card-header">
-          <span>Your Vehicles</span>
-          <button class="add-btn" title="Add Vehicle">+</button>
-        </div>
-        <div class="vehicle-list">
+      <div class="vehicle-list">
+        <div class="card">
+          <div class="card-header">
+            <span>Your Vehicles</span>
+          </div>
+        {% if user_vehicles %}
+          {% for vehicle in user_vehicles %}
+          <div class="vehicle-item">
+            <span class="vehicle-icon">{% if vehicle.type == 'car' %}🚙{% else %}🏍️{% endif %}</span>
+            <span>
+              {{ vehicle.model }} <span class="badge active">Active</span>
+              <br>
+            </span>
+          </div>
+          {% endfor %}
+        {% else %}
           <div class="vehicle-item">
             <span class="vehicle-icon">🚙</span>
             <span>
-              Toyota Camry <span class="badge active">Active</span>
+              No vehicles yet
               <br>
-              <small style="color:var(--muted)">License: ABC 123</small>
+              <small style="color:var(--muted)">Visit the showroom to purchase your first vehicle</small>
             </span>
           </div>
-          <div class="vehicle-item">
-            <span class="vehicle-icon">🏍️</span>
-            <span>
-              Honda CBR <span class="badge due">Maintenance Due</span>
-              <br>
-              <small style="color:var(--muted)">License: XYZ 789</small>
-            </span>
-          </div>
-        </div>
+        {% endif %}
       </div>
-      <!-- Upcoming Services card -->
-      <div class="card">
-        <div class="card-header">
-          <span>Upcoming Services</span>
-          <button class="add-btn" title="Book Service">📅</button>
-        </div>
-        <div class="service-list">
-          <div class="service-item">
-            <span>Oil Change & Inspection</span>
-            <small style="color:var(--muted)">Toyota Camry</small>
-            <small style="color:var(--muted)">May 15, 2023 · 10:00 AM</small>
-            <span class="status confirmed">Confirmed</span>
-          </div>
-          <div class="service-item pending">
-            <span>Brake Service</span>
-            <small style="color:var(--muted)">Honda CBR</small>
-            <small style="color:var(--muted)">May 22, 2023 · 2:30 PM</small>
-            <span class="status pending">Pending</span>
-          </div>
-        </div>
-      </div>
+    </div>
+      
+      <!-- Upcoming Services card (user.html, max 3) -->
+<div class="card">
+  <div class="card-header">
+    <span>Upcoming Services</span>
+  </div>
+  <div class="service-list">
+    {% for appt in user_appointments[:3] %}
+    <div class="service-item">
+      <span>{{ appt.service_name or appt.service }}</span>
+      <small style="color:var(--muted)">{{ appt.vehicleN_name or appt.vehicleN }}</small>
+      <small style="color:var(--muted)">{{ appt.date }} · {{ appt.time }}</small>
+      <span class="status {% if appt.status == 'confirmed' %}confirmed{% else %}pending{% endif %}">{{ appt.status|title }}</span>
+    </div>
+    {% else %}
+    <div class="service-item">
+      <span>No upcoming services</span>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+
       <!-- Recent Activities card -->
       <div class="card">
         <div class="card-header">
@@ -501,51 +505,25 @@
     <div class="services-section">
       <div class="services-header">
         <h2 style="font-size:1.2rem; font-weight:600;">Our Services</h2>
-        <a href="#" style="color:var(--primary); font-weight:500;">View all services →</a>
+        <a href="{{ url_for('services') }}" style="color:var(--primary); font-weight:500;">View all services →</a>
       </div>
       <div class="services-grid">
+        {% for service in services %}
         <div class="service-card">
-          <span class="service-icon">🏠</span>
-          <h3>Oil Change</h3>
-          <p>Regular oil changes to keep your engine running smoothly.</p>
-          <span class="price">From $39.99</span>
-          <button class="add-service" title="Book Oil Change">+</button>
+          <span class="service-icon">{{ icon_map[service.icon] }}</span>
+          <h3>{{ service.name }}</h3>
+          <p>{{ service.description }}</p>
+          <span class="price">From ${{ "%.2f"|format(service.price) }}</span>
+          <!-- <button class="add-service" title="Book {{ service.name }}">+</button> -->
         </div>
-        <div class="service-card">
-          <span class="service-icon">⚙️</span>
-          <h3>Engine Tune-Up</h3>
-          <p>Comprehensive engine maintenance for optimal performance.</p>
-          <span class="price">From $149.99</span>
-          <button class="add-service" title="Book Engine Tune-Up">+</button>
-        </div>
-        <div class="service-card">
-          <span class="service-icon">🛞</span>
-          <h3>Tire Services</h3>
-          <p>Tire rotation, balancing, and replacement services.</p>
-          <span class="price">From $29.99</span>
-          <button class="add-service" title="Book Tire Service">+</button>
-        </div>
-        <div class="service-card">
-          <span class="service-icon">🔍</span>
-          <h3>Inspection</h3>
-          <p>Comprehensive vehicle inspections and diagnostics.</p>
-          <span class="price">From $89.99</span>
-          <button class="add-service" title="Book Inspection">+</button>
-        </div>
+        {% endfor %}
       </div>
     </div>
+    
     </div>
   </div>
-  <div id="footer-placeholder"></div>
-<script>
-  window.addEventListener('DOMContentLoaded', function() {
-    fetch('footer.html')
-      .then(response => response.text())
-      .then(html => {
-        document.getElementById('footer-placeholder').innerHTML = html;
-      });
-  });
-</script>
+  
+  {% include 'footer.html' %}
 
   <!-- Scripts for profile dropdown and active tab highlighting -->
   <script>
@@ -563,7 +541,7 @@
       if (profileDropdown && !profileDropdown.contains(e.target)) {
         profileDropdown?.classList.remove('open');
       }
-    });
+    }); 
   
     // Active tab highlight
     const navLinks = document.querySelectorAll('.navbar nav a');

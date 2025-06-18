@@ -23,13 +23,13 @@
       <div class="footer-col">
         <h4>Quick Links</h4>
         <ul>
-          <li><a href="user.html">Home</a></li>
-          <li><a href="aboutus.html">About Us</a></li>
-          <li><a href="services.html">Services</a></li>
-          <li><a href="#contact-section">Contact</a></li>
-          <li><a href="appointments.html">Appointment</a></li>
+          <li><a href="{{ url_for('user_dashboard') }}">Dashboard</a></li>
+          <li><a href="{{ url_for('about') }}">About Us</a></li>
+          <li><a href="{{ url_for('services') }}">Services</a></li>
+          <li><a href="{{ url_for('showroom') }}">Showroom</a></li>
+          <li><a href="{{ url_for('appointments') }}">Appointments</a></li>
         </ul>
-      </div>
+      </div> 
       <div class="footer-col">
         <h4>Services</h4>
         <ul>
